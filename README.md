@@ -1,6 +1,6 @@
 This repo is forked from RWKV-LM-LoRA
 
-# RWKV-5.2 LoRA Experiment Project RWKV5-LM-LoRA
+# RWKV-5.2 LoRA Experiment RWKV5-LM-LoRA
 
 We have added LoRA training functionality to the RWKV v5.2 model.
 
