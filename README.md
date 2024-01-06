@@ -2,7 +2,7 @@ This repo is forked from RWKV-LM-LoRA
 
 # RWKV-5.2 LoRA Experiment RWKV5-LM-LoRA
 
-We have added LoRA training functionality to the RWKV v5.2 model.
+Added LoRA training functionality to the RWKV v5.2 model.
 
 Now you can initiate LoRA training for the RWKV-5-World model.
 
