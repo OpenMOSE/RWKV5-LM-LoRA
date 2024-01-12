@@ -145,6 +145,72 @@ def make_linear_ffn(*args, **kwargs):
         return LoraLinear(*args, **kwargs)
     else:
         return nn.Linear(*args, **kwargs)
+@functools.wraps(LoraLinear)
+def make_linear_out(*args, **kwargs):
+    if "out" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+@functools.wraps(LoraLinear)
+def make_linear_gate(*args, **kwargs):
+    if "gate" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_attr(*args, **kwargs):
+    if "att_r" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_attk(*args, **kwargs):
+    if "att_k" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_attv(*args, **kwargs):
+    if "att_v" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+        
+@functools.wraps(LoraLinear)
+def make_linear_ffnr(*args, **kwargs):
+    if "ffn_r" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_ffnk(*args, **kwargs):
+    if "ffn_k" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_ffnv(*args, **kwargs):
+    if "ffn_v" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+@functools.wraps(LoraLinear)
+def make_linear_head(*args, **kwargs):
+    if "head" in LORA_CONFIG["parts"] and LORA_CONFIG["r"] > 0:
+        return LoraLinear(*args, **kwargs)
+    else:
+        return nn.Linear(*args, **kwargs)
+        
+
+
+ 
 ########################################################################################################
 
 class RWKV_TimeMix_RWKV5(MyModule):
@@ -191,12 +257,14 @@ class RWKV_TimeMix_RWKV5(MyModule):
         #self.receptance = nn.Linear(args.n_embd, args.dim_att, bias=False)
         #self.key = nn.Linear(args.n_embd, args.dim_att, bias=False)
         #self.value = nn.Linear(args.n_embd, args.dim_att, bias=False)
-        self.key = make_linear_att(args.n_embd, args.dim_att, bias=False)
-        self.value = make_linear_att(args.n_embd, args.dim_att, bias=False)
-        self.receptance = make_linear_att(args.n_embd, args.dim_att, bias=False)
+        self.key = make_linear_attk(args.n_embd, args.dim_att, bias=False)
+        self.value = make_linear_attv(args.n_embd, args.dim_att, bias=False)
+        self.receptance = make_linear_attr(args.n_embd, args.dim_att, bias=False)
 
-        self.output = nn.Linear(args.dim_att, args.n_embd, bias=False)
-        self.gate = nn.Linear(args.n_embd, args.dim_att, bias=False)
+        #self.output = nn.Linear(args.dim_att, args.n_embd, bias=False)
+        #self.gate = nn.Linear(args.n_embd, args.dim_att, bias=False)
+        self.output = make_linear_out(args.dim_att, args.n_embd, bias=False)
+        self.gate = make_linear_gate(args.n_embd, args.dim_att, bias=False)
         self.ln_x = nn.GroupNorm(self.n_head, args.dim_att)
 
     @MyFunction
@@ -255,9 +323,9 @@ class RWKV_ChannelMix(MyModule):
         #self.key = nn.Linear(args.n_embd, args.dim_ffn, bias=False)
         #self.receptance = nn.Linear(args.n_embd, args.n_embd, bias=False)
         #self.value = nn.Linear(args.dim_ffn, args.n_embd, bias=False)
-        self.key = make_linear_ffn(args.n_embd, args.dim_ffn, bias=False)
-        self.receptance = make_linear_ffn(args.n_embd, args.n_embd, bias=False)
-        self.value = make_linear_ffn(args.dim_ffn, args.n_embd, bias=False)
+        self.key = make_linear_ffnk(args.n_embd, args.dim_ffn, bias=False)
+        self.receptance = make_linear_ffnr(args.n_embd, args.n_embd, bias=False)
+        self.value = make_linear_ffnv(args.dim_ffn, args.n_embd, bias=False)
 
     @MyFunction
     def forward(self, x):
@@ -409,11 +477,11 @@ class RWKV(pl.LightningModule):
         self.blocks = nn.ModuleList([Block(args, i) for i in range(args.n_layer)])
 
         self.ln_out = nn.LayerNorm(args.n_embd)
-        self.head = nn.Linear(args.n_embd, args.vocab_size, bias=False)
+        self.head = make_linear_head(args.n_embd, args.vocab_size, bias=False)
 
         if args.head_qk > 0:
-            self.head_q = nn.Linear(args.n_embd, args.head_qk, bias=False)
-            self.head_k = nn.Linear(args.n_embd, args.head_qk, bias=False)
+            self.head_q = make_linear_head(args.n_embd, args.head_qk, bias=False)
+            self.head_k = make_linear_head(args.n_embd, args.head_qk, bias=False)
             self.register_buffer("copy_mask", torch.tril(torch.ones(args.ctx_len, args.ctx_len)))
         if args.dropout > 0:
             self.drop0 = nn.Dropout(p = args.dropout)
