@@ -1,13 +1,13 @@
 python train.py --load_model "model/RWKV-5-World-3B-v2-20231113-ctx4096.pth"\
  --wandb "" --proj_dir "output"\
- --data_file "dataset/FILENAME"\
+ --data_file "dataset/FileName"\
  --data_type "binidx" --vocab_size 65536 --ctx_len 4096 \
  --epoch_steps 200 --epoch_count 1000 --epoch_begin 0 --epoch_save 2 \
- --micro_bsz 2  --n_layer 32 --n_embd 2560\
+ --micro_bsz 1  --n_layer 32 --n_embd 2560\
  --lr_init 1e-4 --lr_final 9e-6 \
  --warmup_steps 200 --beta1 0.9 --beta2 0.999 --adam_eps 1e-8 \
  --accelerator gpu --devices 1 --precision bf16 \
  --strategy deepspeed_stage_1 \
  --grad_cp 1 --my_testing "r2r3r4" \
  --lora --lora_r 8 --lora_alpha 16 --lora_dropout 0.01 \
- --lora_parts=att,ffn,time,ln,gate,out,att_r,att_k,att_v,ffn_r,ffn_k,ffn_v,head # configure which parts to finetune
+ --lora_parts=time,ln,gate,att_r,att_k,att_v,ffn_r,ffn_k,ffn_v # configure which parts to finetune = time,ln,gate,out,att_r,att_k,att_v,ffn_r,ffn_k,ffn_v,head
