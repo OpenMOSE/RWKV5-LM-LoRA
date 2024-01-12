@@ -1,8 +1,11 @@
 This repo is forked from RWKV-LM-LoRA
 
-# RWKV-5.2 LoRA Experiment RWKV5-LM-LoRA
+# RWKV-5.2 LoRA Experiment Project RWKV5-LM-LoRA
 
-Added LoRA training functionality to the RWKV v5.2 model.
+2024.1.12 Added LoRA Trainer with Rocm5.6 Pytorch. 
+  I tested training RWKV-5-World 7b-LoRA on 2 x AMD Instinct MI100
+
+We have added LoRA training functionality to the RWKV v5.2 model.
 
 Now you can initiate LoRA training for the RWKV-5-World model.
 
