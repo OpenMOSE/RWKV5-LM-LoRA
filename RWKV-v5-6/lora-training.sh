@@ -1,0 +1,13 @@
+python train.py --load_model "RWKV-5-World-1B5-v2-20231025-ctx4096.pth"\
+ --wandb "RWKV5-LM-LoRA OpenMOSE Test" --proj_dir "7b-output"\
+ --data_file "output"\
+ --data_type "binidx" --vocab_size 65536 --ctx_len 4096 \
+ --epoch_steps 2500 --epoch_count 1000 --epoch_begin 0 --epoch_save 1 \
+ --micro_bsz 4  --n_layer 24 --n_embd 2048\
+ --lr_init 1e-7 --lr_final 1e-8 \
+ --warmup_steps 200 --beta1 0.9 --beta2 0.999 --adam_eps 1e-8 \
+ --accelerator gpu --devices 1 --precision bf16 \
+ --strategy deepspeed_stage_1 \
+ --grad_cp 0 --my_testing "r2r3r4" \
+ --lora --lora_r 256 --lora_alpha 512 --lora_dropout 0.01 \
+ --lora_parts=emb,head,output,time,ln,gate,att_r,att_k,att_v,ffn_r,ffn_k,ffn_v # configure which parts to finetune = emb,head,output,time,ln,gate,att_r,att_k,att_v,ffn_r,ffn_k,ffn_v
